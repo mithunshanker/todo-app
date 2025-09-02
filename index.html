@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProTask | Advanced To-Do List</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap)" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        #task-list::-webkit-scrollbar { width: 8px; }
+        #task-list::-webkit-scrollbar-track { background: #f1f5f9; }
+        #task-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark #task-list::-webkit-scrollbar-track { background: #1e293b; }
+        .dark #task-list::-webkit-scrollbar-thumb { background: #475569; }
+        .task-enter { animation: slideIn 0.3s ease-out forwards; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
+
+    <div class="min-h-screen flex flex-col items-center justify-start sm:justify-center p-4">
+        <main class="w-full max-w-2xl bg-white dark:bg-slate-800 shadow-2xl rounded-2xl p-6 sm:p-8 space-y-6">
+            <!-- Header -->
+            <header class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white">ProTask</h1>
+                    <p class="text-slate-500 dark:text-slate-400" id="date-display">Loading date...</p>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <svg id="theme-icon-sun" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    <svg id="theme-icon-moon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                </button>
+            </header>
+            <!-- Add Task Form -->
+            <form id="add-task-form" class="space-y-4">
+                <input type="text" id="task-input" placeholder="What's your next move?" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border-2 border-transparent focus:border-blue-500 rounded-lg outline-none transition" required>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <input type="date" id="due-date-input" class="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg outline-none border-2 border-transparent">
+                    <select id="priority-input" class="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-lg outline-none border-2 border-transparent">
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold p-3 rounded-lg">Add Task</button>
+            </form>
+            <!-- Filters & Progress -->
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+                    <div id="filter-buttons" class="flex space-x-2 bg-slate-200 dark:bg-slate-700 p-1 rounded-lg">
+                        <button data-filter="all" class="filter-btn active-filter px-4 py-1 rounded-md text-sm font-semibold">All</button>
+                        <button data-filter="active" class="filter-btn px-4 py-1 rounded-md text-sm font-semibold">Active</button>
+                        <button data-filter="completed" class="filter-btn px-4 py-1 rounded-md text-sm font-semibold">Completed</button>
+                    </div>
+                    <span id="task-count" class="text-sm text-slate-500 dark:text-slate-400">0 tasks</span>
+                </div>
+                <div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                        <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Task List -->
+            <div id="task-list-container" class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg">
+                <ul id="task-list" class="space-y-3 h-64 overflow-y-auto pr-2">
+                    
+                </ul>
+            </div>
+        </main>
+        <!-- Edit Modal -->
+        <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+             
+        </div>
+    </div>
+    <script>
+    </script>
+</body>
+</html>
