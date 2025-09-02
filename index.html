@@ -73,12 +73,58 @@
                 </ul>
             </div>
         </main>
-        <!-- Edit Modal -->
+        
         <div id="edit-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
              
         </div>
     </div>
     <script>
-    </script>
+document.addEventListener('DOMContentLoaded', () => {
+    const taskInput = document.getElementById('task-input');
+    const addTaskForm = document.getElementById('add-task-form');
+    const taskList = document.getElementById('task-list');
+
+    let tasks = [];
+
+    const renderTasks = () => {
+        taskList.innerHTML = '';
+        tasks.forEach(task => {
+            const taskElement = document.createElement('li');
+            taskElement.className = `flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 shadow-sm`;
+            taskElement.dataset.id = task.id;
+            taskElement.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <input type="checkbox" class="toggle-complete">
+                    <span class="task-text">${task.text}</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                </div>
+            `;
+            taskList.appendChild(taskElement);
+        });
+    };
+    addTaskForm.addEventListener('submit', e => {
+        e.preventDefault();
+        const taskText = taskInput.value.trim();
+        if (taskText === '') return;
+
+        const newTask = {
+            id: Date.now().toString(),
+            text: taskText,
+            completed: false,
+        };
+
+        tasks.push(newTask);
+        renderTasks();
+        taskInput.value = '';
+        taskInput.focus();
+    });
+
+
+    renderTasks();
+});
+</script>
 </body>
 </html>
