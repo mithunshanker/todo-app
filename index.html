@@ -80,56 +80,103 @@
     </div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    
     const taskInput = document.getElementById('task-input');
     const addTaskForm = document.getElementById('add-task-form');
     const taskList = document.getElementById('task-list');
-
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const dueDateInput = document.getElementById('due-date-input');
+    const priorityInput = document.getElementById('priority-input');
+    const taskCount = document.getElementById('task-count');
+    const progressBar = document.getElementById('progress-bar');
+    
     let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    let currentFilter = 'all';
 
     const saveTasks = () => {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     };
-    
-    const renderTasks = () => {
-        taskList.innerHTML = '';
-        tasks.forEach(task => {
-            const taskElement = document.createElement('li');
-            taskElement.className = `flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 shadow-sm`;
-            taskElement.dataset.id = task.id;
-            taskElement.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <input type="checkbox" class="toggle-complete" ${task.completed ? 'checked' : ''}>
-                    <span class="task-text ${task.completed ? 'line-through text-slate-500' : ''}">${task.text}</span>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button class="edit-btn p-1.5 rounded hover:bg-slate-200">Edit</button>
-                    <button class="delete-btn p-1.5 rounded hover:bg-red-100">Delete</button>
-                </div>
-            `;
-            taskList.appendChild(taskElement);
-        });
+
+    const updateTaskCountAndProgress = () => {
+        const activeTasks = tasks.filter(t => !t.completed).length;
+        taskCount.textContent = `${activeTasks} task${activeTasks !== 1 ? 's' : ''} left`;
+        
+        const completedTasks = tasks.filter(t => t.completed).length;
+        const totalTasks = tasks.length;
+        const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+        progressBar.style.width = `${progress}%`;
     };
 
+    const renderTasks = () => {
+        taskList.innerHTML = '';
+        
+        const filteredTasks = tasks.filter(task => {
+            if (currentFilter === 'active') return !task.completed;
+            if (currentFilter === 'completed') return task.completed;
+            return true;
+        });
+
+        if (filteredTasks.length === 0) {
+             taskList.innerHTML = `<li class="text-center text-slate-500">No tasks here!</li>`;
+        } else {
+            filteredTasks.forEach(task => {
+                const taskElement = document.createElement('li');
+                const priorityClasses = {
+                    high: 'border-l-4 border-red-500',
+                    medium: 'border-l-4 border-yellow-500',
+                    low: 'border-l-4 border-green-500'
+                };
+                taskElement.className = `flex items-center justify-between p-3 rounded-lg bg-white dark:bg-slate-800 shadow-sm ${priorityClasses[task.priority]}`;
+                taskElement.dataset.id = task.id;
+
+                taskElement.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" class="toggle-complete" ${task.completed ? 'checked' : ''}>
+                        <div class="flex flex-col">
+                            <span class="task-text ${task.completed ? 'line-through text-slate-500' : ''}">${task.text}</span>
+                            <small class="text-xs text-slate-400">${task.dueDate ? `Due: ${task.dueDate}` : 'No due date'}</small>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="edit-btn p-1.5 rounded hover:bg-slate-200">Edit</button>
+                        <button class="delete-btn p-1.5 rounded hover:bg-red-100">Delete</button>
+                    </div>
+                `;
+                taskList.appendChild(taskElement);
+            });
+        }
+        updateTaskCountAndProgress();
+    };
+
+    
     addTaskForm.addEventListener('submit', e => {
         e.preventDefault();
         const taskText = taskInput.value.trim();
         if (taskText === '') return;
-        const newTask = { id: Date.now().toString(), text: taskText, completed: false };
+
+        const newTask = {
+            id: Date.now().toString(),
+            text: taskText,
+            completed: false,
+            dueDate: dueDateInput.value,
+            priority: priorityInput.value
+        };
+
         tasks.push(newTask);
         saveTasks();
         renderTasks();
+
         taskInput.value = '';
+        dueDateInput.value = '';
+        priorityInput.value = 'low';
+        taskInput.focus();
     });
 
-    
     taskList.addEventListener('click', e => {
         const target = e.target;
         const taskElement = target.closest('li');
         if (!taskElement) return;
         const taskId = taskElement.dataset.id;
 
-        // Toggle Complete
         if (target.matches('.toggle-complete')) {
             const task = tasks.find(t => t.id === taskId);
             task.completed = !task.completed;
@@ -137,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTasks();
         }
 
-        // Delete Task
         if (target.matches('.delete-btn')) {
             tasks = tasks.filter(t => t.id !== taskId);
             saveTasks();
@@ -145,9 +191,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            currentFilter = button.dataset.filter;
+            filterButtons.forEach(btn => btn.classList.remove('active-filter'));
+            button.classList.add('active-filter');
+            renderTasks();
+        });
+    });
+
+   
     renderTasks();
 });
 </script>
+
 
 </body>
 </html>
