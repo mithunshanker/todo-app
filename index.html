@@ -78,14 +78,20 @@
              
         </div>
     </div>
-    <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
+
     const taskInput = document.getElementById('task-input');
     const addTaskForm = document.getElementById('add-task-form');
     const taskList = document.getElementById('task-list');
 
-    let tasks = [];
 
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+    const saveTasks = () => {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    };
+    
     const renderTasks = () => {
         taskList.innerHTML = '';
         tasks.forEach(task => {
@@ -105,6 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
             taskList.appendChild(taskElement);
         });
     };
+
+
     addTaskForm.addEventListener('submit', e => {
         e.preventDefault();
         const taskText = taskInput.value.trim();
@@ -117,12 +125,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         tasks.push(newTask);
+        saveTasks();
         renderTasks();
         taskInput.value = '';
         taskInput.focus();
     });
 
-
+    
     renderTasks();
 });
 </script>
